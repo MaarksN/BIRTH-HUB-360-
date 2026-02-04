@@ -80,6 +80,14 @@ model Company {
   tenantId      String
   tenant        Tenant   @relation(fields: [tenantId], references: [id])
   qualityScore  DataQualityScore?
+
+  // BDR Extensions
+  techStack     Json?    // List of technologies detected
+  competitors   Json?    // List of identified competitors
+  maturityScore Float?
+  contacts      Contact[]
+  accountPlans  AccountPlan[]
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -101,5 +109,43 @@ model DataQualityScore {
   details     Json?    // Breakdown of the score
   companyId   String   @unique
   company     Company  @relation(fields: [companyId], references: [id])
+  updatedAt   DateTime @updatedAt
+}
+
+// --- BDR Module Models ---
+
+model Contact {
+  id              String   @id @default(uuid())
+  name            String
+  email           String?
+  phone           String?
+  jobTitle        String?
+  linkedIn        String?
+  influenceLevel  String?  // e.g., "Decision Maker", "Influencer", "Blocker"
+  isBlocker       Boolean  @default(false)
+  companyId       String
+  company         Company  @relation(fields: [companyId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model AccountPlan {
+  id          String   @id @default(uuid())
+  strategy    String?  // Text description of entry strategy
+  goals       Json?    // List of goals
+  status      String   // Draft, Active, Completed
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model OutboundSequence {
+  id          String   @id @default(uuid())
+  name        String
+  steps       Json     // Array of steps (email, call, linkedin)
+  status      String   // Active, Paused, Draft
+  tenantId    String
+  createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

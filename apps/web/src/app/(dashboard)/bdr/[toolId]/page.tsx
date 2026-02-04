@@ -1,13 +1,13 @@
 "use client";
 
-import { LDR_TOOLS } from "@/lib/ldr-tools";
+import { BDR_TOOLS } from "@/lib/bdr-tools";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 export default function ToolPage({ params }: { params: { toolId: string } }) {
-  const tool = LDR_TOOLS.find((t) => t.id === params.toolId);
+  const tool = BDR_TOOLS.find((t) => t.id === params.toolId);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
 
@@ -18,8 +18,6 @@ export default function ToolPage({ params }: { params: { toolId: string } }) {
   const handleExecute = async () => {
     setLoading(true);
     try {
-        // In a real app, this would use the tool.endpoint from config
-        // For now we simulate a call
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
         const response = await fetch(`${apiUrl}${tool.endpoint}`, {
             method: 'POST',
@@ -46,7 +44,7 @@ export default function ToolPage({ params }: { params: { toolId: string } }) {
         <Card>
             <CardHeader>
                 <CardTitle>Input Parameters</CardTitle>
-                <CardDescription>Configure the agent parameters.</CardDescription>
+                <CardDescription>Configure the BDR Agent parameters.</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
@@ -54,7 +52,7 @@ export default function ToolPage({ params }: { params: { toolId: string } }) {
                         <p className="text-sm text-muted-foreground">This tool requires specific input parameters defined by the {tool.id} schema.</p>
                     </div>
                     <Button onClick={handleExecute} disabled={loading}>
-                        {loading ? "Running AI Agent..." : "Execute Agent"}
+                        {loading ? "Hunting..." : "Execute Hunter Agent"}
                     </Button>
                 </div>
             </CardContent>

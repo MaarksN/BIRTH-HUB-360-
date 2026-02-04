@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import ldrRoutes from './routes/ldr';
+import bdrRoutes from './routes/bdr';
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/ldr', ldrRoutes);
+app.use('/api/bdr', bdrRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Birth Hub Innovation 360 Orchestrator Running' });
