@@ -18,6 +18,7 @@ model Tenant {
   updatedAt   DateTime @updatedAt
   users       User[]
   roles       Role[]
+  companies   Company[]
 }
 
 model User {
@@ -32,6 +33,7 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   logs        Log[]
+  ldrRequests LdrRequest[]
 }
 
 model Role {
@@ -64,4 +66,40 @@ model Log {
   action      String
   details     Json?
   createdAt   DateTime @default(now())
+}
+
+// --- LDR Module Models ---
+
+model Company {
+  id            String   @id @default(uuid())
+  name          String
+  cnpj          String?  @unique
+  cnae          String?
+  industry      String?
+  status        String?  // Active, Inactive
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id])
+  qualityScore  DataQualityScore?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model LdrRequest {
+  id          String   @id @default(uuid())
+  toolName    String   // e.g., "enrich_cnpj"
+  inputData   Json
+  outputData  Json?
+  status      String   // pending, completed, failed
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model DataQualityScore {
+  id          String   @id @default(uuid())
+  score       Float
+  details     Json?    // Breakdown of the score
+  companyId   String   @unique
+  company     Company  @relation(fields: [companyId], references: [id])
+  updatedAt   DateTime @updatedAt
 }

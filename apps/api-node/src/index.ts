@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import ldrRoutes from './routes/ldr';
 
 dotenv.config();
 
@@ -11,6 +12,8 @@ const PORT = process.env.PORT || 3001;
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+
+app.use('/api/ldr', ldrRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Birth Hub Innovation 360 Orchestrator Running' });
