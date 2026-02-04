@@ -6,6 +6,9 @@ import ldrRoutes from './routes/ldr';
 import bdrRoutes from './routes/bdr';
 import sdrRoutes from './routes/sdr';
 import aeRoutes from './routes/ae';
+import onboardingRoutes from './routes/onboarding';
+import csRoutes from './routes/cs';
+import supportRoutes from './routes/support';
 
 dotenv.config();
 
@@ -20,6 +23,9 @@ app.use('/api/ldr', ldrRoutes);
 app.use('/api/bdr', bdrRoutes);
 app.use('/api/sdr', sdrRoutes);
 app.use('/api/ae', aeRoutes);
+app.use('/api/onboarding', onboardingRoutes);
+app.use('/api/cs', csRoutes);
+app.use('/api/support', supportRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Birth Hub Innovation 360 Orchestrator Running' });

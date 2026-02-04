@@ -89,6 +89,16 @@ model Company {
   accountPlans  AccountPlan[]
   deals         Deal[]
 
+  // Onboarding Extensions
+  onboardingProjects OnboardingProject[]
+
+  // CS Extensions
+  successPlans  SuccessPlan[]
+  healthChecks  HealthCheck[]
+
+  // Support Extensions
+  tickets       Ticket[]
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -237,4 +247,77 @@ model Meeting {
   deal          Deal?    @relation(fields: [dealId], references: [id])
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+// --- Onboarding Module Models ---
+
+model OnboardingProject {
+  id            String    @id @default(uuid())
+  status        String    // Not Started, In Progress, Completed, Delayed
+  startDate     DateTime?
+  endDate       DateTime?
+  progress      Float     @default(0)
+  companyId     String
+  company       Company   @relation(fields: [companyId], references: [id])
+  tasks         ProjectTask[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model ProjectTask {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  status      String   // Pending, Done
+  dueDate     DateTime?
+  projectId   String
+  project     OnboardingProject @relation(fields: [projectId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// --- Customer Success Module Models ---
+
+model SuccessPlan {
+  id          String   @id @default(uuid())
+  objectives  Json?    // List of objectives
+  status      String   // Active, Completed
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model HealthCheck {
+  id          String   @id @default(uuid())
+  score       Float
+  riskLevel   String   // Low, Medium, High
+  notes       String?
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+// --- Support Module Models ---
+
+model Ticket {
+  id          String   @id @default(uuid())
+  subject     String
+  priority    String   // Low, Medium, High, Critical
+  status      String   // Open, In Progress, Resolved
+  category    String?  // Bug, Feature Request, etc.
+  companyId   String?
+  company     Company? @relation(fields: [companyId], references: [id])
+  messages    TicketMessage[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TicketMessage {
+  id          String   @id @default(uuid())
+  content     String
+  isInternal  Boolean  @default(false)
+  ticketId    String
+  ticket      Ticket   @relation(fields: [ticketId], references: [id])
+  createdAt   DateTime @default(now())
 }
