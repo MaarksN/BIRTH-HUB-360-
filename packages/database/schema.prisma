@@ -87,6 +87,7 @@ model Company {
   maturityScore Float?
   contacts      Contact[]
   accountPlans  AccountPlan[]
+  deals         Deal[]
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -169,6 +170,7 @@ model Lead {
   objections      Json?    // List of detected objections
   nextFollowUp    DateTime?
   sdrMetrics      SdrMetrics?
+  deals           Deal[]
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
@@ -192,4 +194,47 @@ model Cadence {
   tenantId    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// --- AE Module Models ---
+
+model Deal {
+  id          String    @id @default(uuid())
+  name        String
+  amount      Decimal?
+  stage       String    // Discovery, Proposal, Negotiation, Closed Won, Closed Lost
+  probability Float?
+  closeDate   DateTime?
+  companyId   String?
+  company     Company?  @relation(fields: [companyId], references: [id])
+  leadId      String?
+  lead        Lead?     @relation(fields: [leadId], references: [id])
+  proposals   Proposal[]
+  meetings    Meeting[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Proposal {
+  id          String   @id @default(uuid())
+  content     Json?    // Structured content of the proposal
+  version     Int      @default(1)
+  status      String   // Draft, Sent, Accepted, Rejected
+  dealId      String
+  deal        Deal     @relation(fields: [dealId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Meeting {
+  id            String   @id @default(uuid())
+  title         String
+  date          DateTime
+  transcript    String?
+  summary       String?
+  participants  Json?    // List of attendees
+  dealId        String?
+  deal          Deal?    @relation(fields: [dealId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

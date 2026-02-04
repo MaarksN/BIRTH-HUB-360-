@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import ldrRoutes from './routes/ldr';
 import bdrRoutes from './routes/bdr';
 import sdrRoutes from './routes/sdr';
+import aeRoutes from './routes/ae';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use('/api/ldr', ldrRoutes);
 app.use('/api/bdr', bdrRoutes);
 app.use('/api/sdr', sdrRoutes);
+app.use('/api/ae', aeRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Birth Hub Innovation 360 Orchestrator Running' });
