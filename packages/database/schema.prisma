@@ -123,8 +123,16 @@ model Contact {
   linkedIn        String?
   influenceLevel  String?  // e.g., "Decision Maker", "Influencer", "Blocker"
   isBlocker       Boolean  @default(false)
-  companyId       String
-  company         Company  @relation(fields: [companyId], references: [id])
+  companyId       String?  // Optional because a Lead might not be linked to a Company yet
+  company         Company? @relation(fields: [companyId], references: [id])
+
+  // SDR Extensions
+  leadScore       Float?
+  lastInteraction DateTime?
+  status          String?  // New, Contacted, Qualified, Lost
+  source          String?  // Inbound, Outbound, Event
+  leads           Lead[]
+
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
@@ -145,6 +153,42 @@ model OutboundSequence {
   name        String
   steps       Json     // Array of steps (email, call, linkedin)
   status      String   // Active, Paused, Draft
+  tenantId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// --- SDR Module Models ---
+
+model Lead {
+  id              String   @id @default(uuid())
+  contactId       String
+  contact         Contact  @relation(fields: [contactId], references: [id])
+  intentScore     Float?
+  channel         String?  // Web, Email, LinkedIn
+  objections      Json?    // List of detected objections
+  nextFollowUp    DateTime?
+  sdrMetrics      SdrMetrics?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model SdrMetrics {
+  id              String   @id @default(uuid())
+  responseTime    Int?     // In minutes
+  touchpoints     Int      @default(0)
+  conversionRate  Float?
+  leadId          String   @unique
+  lead            Lead     @relation(fields: [leadId], references: [id])
+  updatedAt       DateTime @updatedAt
+}
+
+model Cadence {
+  id          String   @id @default(uuid())
+  name        String
+  type        String   // Inbound, Nurture
+  steps       Json
+  isActive    Boolean  @default(true)
   tenantId    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
