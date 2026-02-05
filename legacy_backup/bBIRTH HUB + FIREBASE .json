@@ -512,15 +512,16 @@ const DealsPage = () => {
     );
 };
 
+const revenueData = {
+    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+    datasets: [
+        { label: 'Faturamento', data: [50000, 65000, 80000, 75000, 90000, 110000], borderColor: '#facc15', backgroundColor: 'rgba(250, 204, 21, 0.1)', fill: true, tension: 0.4 },
+        { label: 'Meta', data: [70000, 75000, 80000, 85000, 90000, 95000], borderColor: '#6366f1', borderDash: [5, 5], fill: false, tension: 0.4 }
+    ]
+};
+
 const AnalyticsPage = () => {
     // Dados para os gráficos (estáticos por enquanto)
-    const revenueData = { 
-        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'], 
-        datasets: [
-            { label: 'Faturamento', data: [50000, 65000, 80000, 75000, 90000, 110000], borderColor: '#facc15', backgroundColor: 'rgba(250, 204, 21, 0.1)', fill: true, tension: 0.4 }, 
-            { label: 'Meta', data: [70000, 75000, 80000, 85000, 90000, 95000], borderColor: '#6366f1', borderDash: [5, 5], fill: false, tension: 0.4 }
-        ] 
-    };
     
     const handleExportCSV = () => {
         const headers = ['Mês', 'Faturamento', 'Meta'];
