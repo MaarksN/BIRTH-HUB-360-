@@ -18,6 +18,7 @@ model Tenant {
   updatedAt   DateTime @updatedAt
   users       User[]
   roles       Role[]
+  deals       Deal[]
 }
 
 model User {
@@ -64,4 +65,14 @@ model Log {
   action      String
   details     Json?
   createdAt   DateTime @default(now())
+}
+
+model Deal {
+  id          String   @id @default(uuid())
+  name        String
+  closeDate   DateTime?
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
