@@ -34,6 +34,7 @@ model User {
   updatedAt   DateTime @updatedAt
   logs        Log[]
   ldrRequests LdrRequest[]
+  teamPerformance TeamPerformance[]
 }
 
 model Role {
@@ -320,4 +321,90 @@ model TicketMessage {
   ticketId    String
   ticket      Ticket   @relation(fields: [ticketId], references: [id])
   createdAt   DateTime @default(now())
+}
+
+// --- RevOps Models ---
+
+model OpsMetric {
+  id          String   @id @default(uuid())
+  name        String
+  value       Float
+  category    String   // Pipeline, Efficiency, etc.
+  tenantId    String
+  createdAt   DateTime @default(now())
+}
+
+model PipelineAudit {
+  id          String   @id @default(uuid())
+  issues      Json?    // List of data quality issues
+  status      String   // Open, Resolved
+  tenantId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// --- Head of Sales Models ---
+
+model TeamPerformance {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  quota       Decimal
+  attainment  Decimal
+  period      String   // Q1-2024
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BurnoutIndicator {
+  id          String   @id @default(uuid())
+  userId      String
+  riskLevel   String   // Low, Medium, High
+  factors     Json?    // Overwork, lack of time off, etc.
+  createdAt   DateTime @default(now())
+}
+
+// --- CRO Models ---
+
+model ForecastScenario {
+  id               String   @id @default(uuid())
+  name             String
+  projectedRevenue Decimal
+  assumptions      Json?
+  tenantId         String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model MarketShareAnalysis {
+  id          String   @id @default(uuid())
+  segment     String
+  share       Float
+  competitors Json?
+  tenantId    String
+  createdAt   DateTime @default(now())
+}
+
+// --- Growth Marketing Models ---
+
+model Campaign {
+  id          String   @id @default(uuid())
+  name        String
+  channel     String   // LinkedIn, Google, Email
+  spend       Decimal
+  roi         Float?
+  tenantId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Experiment {
+  id             String   @id @default(uuid())
+  name           String
+  variant        String
+  conversionRate Float?
+  status         String   // Running, Completed
+  tenantId       String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
