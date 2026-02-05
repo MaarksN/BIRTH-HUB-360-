@@ -75,6 +75,23 @@ const db = getFirestore(app);
 // HELPER COMPONENTS & HOOKS
 // =================================================================================
 
+// Hook customizado para debouncing
+function useDebounce(value, delay) {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, delay]);
+
+    return debouncedValue;
+}
+
 // Hook customizado para buscar dados do Firestore em tempo real
 function useFirestoreCollection(collectionName, order = null) {
     const [data, setData] = useState([]);
@@ -131,13 +148,17 @@ const NavLink = ({ icon, title, page, currentPage, setCurrentPage }) => {
 // =================================================================================
 const AppHeader = ({ pageTitle }) => {
     const [searchQuery, setSearchQuery] = useState('');
+    const debouncedSearchQuery = useDebounce(searchQuery, 300);
     const [showNotifications, setShowNotifications] = useState(false);
     const notificationsRef = useRef(null);
 
+    useEffect(() => {
+        // Em um app real, aqui você faria a busca (ex: com Algolia ou Cloud Functions)
+        console.log("Buscando por:", debouncedSearchQuery);
+    }, [debouncedSearchQuery]);
+
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
-        // Em um app real, aqui você faria a busca (ex: com Algolia ou Cloud Functions)
-        console.log("Buscando por:", e.target.value);
     };
 
     // Fechar dropdown de notificações ao clicar fora
