@@ -2,13 +2,13 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 
 // --- Firebase ---
 import { initializeApp } from 'firebase/app';
-import {
-    getFirestore,
-    collection,
-    onSnapshot,
-    addDoc,
-    doc,
-    updateDoc,
+import { 
+    getFirestore, 
+    collection, 
+    onSnapshot, 
+    addDoc, 
+    doc, 
+    updateDoc, 
     deleteDoc,
     query,
     serverTimestamp,
@@ -32,10 +32,10 @@ import {
 import { Bar, Line, Doughnut } from 'react-chartjs-2';
 
 // --- Icons (Lucide React) ---
-import {
-    LayoutDashboard, Contact, Briefcase, CheckSquare, BarChart3, Lightbulb,
-    BrainCircuit, Settings, LogOut, Plus, Search, Pencil, Trash2, Building2,
-    Phone, Mail, Video, Utensils, ArrowUp, Sparkles, Copy, Check, X, Target,
+import { 
+    LayoutDashboard, Contact, Briefcase, CheckSquare, BarChart3, Lightbulb, 
+    BrainCircuit, Settings, LogOut, Plus, Search, Pencil, Trash2, Building2, 
+    Phone, Mail, Video, Utensils, ArrowUp, Sparkles, Copy, Check, X, Target, 
     DollarSign, UserCircle, Bell, PlugZap, Users, CalendarDays, ChevronLeft, ChevronRight,
     Send, Download, Calendar as CalendarIcon, GripVertical
 } from 'lucide-react';
@@ -46,7 +46,7 @@ import { marked } from 'marked';
 
 // --- Chart.js Registration ---
 ChartJS.register(
-  CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement,
+  CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, 
   Title, Tooltip, Legend, Filler
 );
 ChartJS.defaults.color = '#94a3b8';
@@ -54,7 +54,7 @@ ChartJS.defaults.font.family = 'Poppins, sans-serif';
 
 
 // =================================================================================
-// FIREBASE CONFIGURATION
+// FIREBASE CONFIGURATION 
 // =================================================================================
 // ATENÇÃO: Substitua este objeto pela configuração do seu projeto Firebase.
 const firebaseConfig = {
@@ -90,7 +90,7 @@ function useFirestoreCollection(collectionName, order = null) {
         } else {
            q = query(collection(db, collectionName));
         }
-
+        
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const items = [];
             querySnapshot.forEach((doc) => {
@@ -115,10 +115,10 @@ const NavLink = ({ icon, title, page, currentPage, setCurrentPage }) => {
     const inactiveClasses = 'text-slate-400 hover:bg-gray-800 hover:text-white';
 
     return (
-        <a
-            href="#"
-            className={`nav-link p-3 rounded-lg ${isActive ? activeClasses : inactiveClasses}`}
-            title={title}
+        <a 
+            href="#" 
+            className={`nav-link p-3 rounded-lg ${isActive ? activeClasses : inactiveClasses}`} 
+            title={title} 
             onClick={(e) => { e.preventDefault(); setCurrentPage(page); }}
         >
             <Icon />
@@ -152,7 +152,7 @@ const AppHeader = ({ pageTitle }) => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [notificationsRef]);
-
+    
     // Mock data for notifications
     const notifications = [
         { id: 1, text: "Nova tarefa 'Follow-up' atribuída a você.", time: "5 min atrás" },
@@ -169,9 +169,9 @@ const AppHeader = ({ pageTitle }) => {
             <div className="flex items-center gap-4">
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                    <input
-                        type="text"
-                        placeholder="Pesquisa global..."
+                    <input 
+                        type="text" 
+                        placeholder="Pesquisa global..." 
                         className="w-full md:w-64 bg-gray-800 border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-white focus:ring-2 focus:ring-amber-400"
                         value={searchQuery}
                         onChange={handleSearch}
@@ -211,18 +211,18 @@ const AppHeader = ({ pageTitle }) => {
 const EmailModal = ({ contact, onClose }) => {
     const [subject, setSubject] = useState('');
     const [body, setBody] = useState('');
-
+    
     const handleSendEmail = async () => {
         if (!subject || !body) {
             alert("Por favor, preencha o assunto e o corpo do e-mail.");
             return;
         }
-
+        
         console.log("--- SIMULANDO ENVIO DE E-MAIL ---");
         console.log("Para:", contact.email);
         console.log("Assunto:", subject);
         console.log("Corpo:", body);
-
+        
         // Salva o e-mail no histórico do contato no Firestore
         const historyRef = collection(db, `contacts/${contact.id}/history`);
         await addDoc(historyRef, {
@@ -231,7 +231,7 @@ const EmailModal = ({ contact, onClose }) => {
             body: body,
             timestamp: serverTimestamp()
         });
-
+        
         alert("E-mail enviado e registrado no histórico!");
         onClose();
     };
@@ -278,7 +278,7 @@ const DashboardPage = () => {
         { id: 'kpi3', icon: DollarSign, title: 'Faturamento (Mês)', value: 'R$ 110.500', color: 'green' },
         { id: 'kpi4', icon: CheckSquare, title: 'Tarefas Atrasadas', value: '1', color: 'red' },
     ];
-
+    
     const [kpis, setKpis] = useState(initialKpis);
     const dragItem = useRef(null);
     const dragOverItem = useRef(null);
@@ -315,8 +315,8 @@ const DashboardPage = () => {
                     const Icon = kpi.icon;
                     const colors = colorClasses[kpi.color];
                     return (
-                        <div
-                            key={kpi.id}
+                        <div 
+                            key={kpi.id} 
                             className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex items-center gap-4 relative cursor-grab"
                             draggable
                             onDragStart={() => dragItem.current = index}
@@ -357,12 +357,12 @@ const ContactsPage = () => {
     const contacts = useFirestoreCollection('contacts');
     const [selectedContact, setSelectedContact] = useState(null);
     const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
-
+    
     // Hook para buscar o histórico do contato selecionado
     const contactHistory = useFirestoreCollection(
         selectedContact ? `contacts/${selectedContact.id}/history` : null, 'timestamp'
     );
-
+    
     useEffect(() => {
         if (contacts.length > 0 && !selectedContact) {
             setSelectedContact(contacts[0]);
@@ -433,7 +433,11 @@ const ContactsPage = () => {
 
 const DealsPage = () => {
     const deals = useFirestoreCollection('deals');
-    const stages = useMemo(() => {
+    const [stages, setStages] = useState({
+        'qualificacao': [], 'demonstracao': [], 'proposta': [], 'negociacao': [], 'ganho': [], 'perdido': []
+    });
+
+    useEffect(() => {
         const sortedStages = {
             'qualificacao': [], 'demonstracao': [], 'proposta': [], 'negociacao': [], 'ganho': [], 'perdido': []
         };
@@ -442,7 +446,7 @@ const DealsPage = () => {
                 sortedStages[deal.stage].push(deal);
             }
         });
-        return sortedStages;
+        setStages(sortedStages);
     }, [deals]);
 
     const handleDragStart = (e, dealId) => {
@@ -472,7 +476,7 @@ const DealsPage = () => {
         <div className="flex flex-col p-8 pt-0 h-full">
             <div className="flex-1 flex gap-6 overflow-x-auto pb-4">
                 {Object.entries(stages).map(([stageKey, dealsInStage]) => (
-                    <div
+                    <div 
                         key={stageKey}
                         className="w-80 flex-shrink-0 bg-gray-800 rounded-xl border border-gray-700 flex flex-col"
                         onDrop={(e) => handleDrop(e, stageKey)}
@@ -508,16 +512,17 @@ const DealsPage = () => {
     );
 };
 
+const revenueData = {
+    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+    datasets: [
+        { label: 'Faturamento', data: [50000, 65000, 80000, 75000, 90000, 110000], borderColor: '#facc15', backgroundColor: 'rgba(250, 204, 21, 0.1)', fill: true, tension: 0.4 },
+        { label: 'Meta', data: [70000, 75000, 80000, 85000, 90000, 95000], borderColor: '#6366f1', borderDash: [5, 5], fill: false, tension: 0.4 }
+    ]
+};
+
 const AnalyticsPage = () => {
     // Dados para os gráficos (estáticos por enquanto)
-    const revenueData = {
-        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
-        datasets: [
-            { label: 'Faturamento', data: [50000, 65000, 80000, 75000, 90000, 110000], borderColor: '#facc15', backgroundColor: 'rgba(250, 204, 21, 0.1)', fill: true, tension: 0.4 },
-            { label: 'Meta', data: [70000, 75000, 80000, 85000, 90000, 95000], borderColor: '#6366f1', borderDash: [5, 5], fill: false, tension: 0.4 }
-        ]
-    };
-
+    
     const handleExportCSV = () => {
         const headers = ['Mês', 'Faturamento', 'Meta'];
         const rows = revenueData.labels.map((label, index) => [
@@ -525,11 +530,11 @@ const AnalyticsPage = () => {
             revenueData.datasets[0].data[index],
             revenueData.datasets[1].data[index]
         ]);
-
-        let csvContent = "data:text/csv;charset=utf-8,"
-            + headers.join(",") + "\n"
+        
+        let csvContent = "data:text/csv;charset=utf-8," 
+            + headers.join(",") + "\n" 
             + rows.map(e => e.join(",")).join("\n");
-
+            
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
@@ -570,7 +575,7 @@ const AnalyticsPage = () => {
 
 const TasksPage = () => {
     const tasks = useFirestoreCollection('tasks');
-
+    
     const toggleTask = async (task) => {
         const taskRef = doc(db, "tasks", task.id);
         await updateDoc(taskRef, {
@@ -677,7 +682,7 @@ const CalendarPage = () => {
 // =================================================================================
 export default function App() {
     const [currentPage, setCurrentPage] = useState('dashboard');
-
+    
     const pageDetails = {
         'dashboard': { title: 'Dashboard Principal 🚀', subtitle: 'Bem-vindo de volta, Ana! Aqui está um resumo da sua performance.' },
         'contatos': { title: 'Gerenciador de Contatos 👥', subtitle: 'Visualize e gerencie todos os seus contatos em um só lugar.' },
@@ -688,7 +693,7 @@ export default function App() {
         'ideias': { title: 'Hub de Ideias 💡', subtitle: 'Sugira, vote e acompanhe as inovações que vão moldar nosso futuro.'},
         'propostas': { title: 'Gerador de Propostas 📄', subtitle: 'Crie propostas comerciais completas e personalizadas.' }
     };
-
+    
     const navItems = [
         { icon: LayoutDashboard, title: 'Dashboard', page: 'dashboard' },
         { icon: Contact, title: 'Contatos', page: 'contatos' },
@@ -699,7 +704,7 @@ export default function App() {
         { icon: Lightbulb, title: 'Hub de Ideias', page: 'ideias' },
         { icon: BrainCircuit, title: 'Gerador de Propostas', page: 'propostas' },
     ];
-
+    
     const renderPage = () => {
         switch (currentPage) {
             case 'dashboard': return <DashboardPage />;
@@ -740,3 +745,4 @@ export default function App() {
         </div>
     );
 }
+
