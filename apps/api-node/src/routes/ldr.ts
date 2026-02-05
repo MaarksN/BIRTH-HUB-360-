@@ -3,10 +3,8 @@ import { Router, Request, Response } from 'express';
 const router = Router();
 
 // Middleware to forward to Python Service (Placeholder)
-const forwardToAI = async (endpoint: string, data: any) => {
-    // In production, this would use axios/fetch to call the Python Service
-    console.log(`Forwarding to Python AI: ${endpoint}`, data);
-    return { status: 'forwarded', endpoint, data };
+import { forwardToAI } from "../lib/ai-bridge";
+//
 };
 
 // 1. Enriquecimento Automático de CNPJ

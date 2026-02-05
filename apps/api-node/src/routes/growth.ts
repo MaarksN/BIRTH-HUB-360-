@@ -2,9 +2,8 @@ import { Router, Request, Response } from 'express';
 
 const router = Router();
 
-const forwardToAI = async (endpoint: string, data: any) => {
-    console.log(`Forwarding to Python AI: ${endpoint}`, data);
-    return { status: 'forwarded', endpoint, data };
+import { forwardToAI } from "../lib/ai-bridge";
+//
 };
 
 router.post('/:tool', async (req: Request, res: Response) => {

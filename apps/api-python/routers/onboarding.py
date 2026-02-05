@@ -1,28 +1,81 @@
-from fastapi import APIRouter
-from typing import Dict, List
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from typing import Dict, List, Optional
+import random
 
 router = APIRouter(prefix="/onboarding", tags=["Onboarding"])
 
+class SalesDossierRequest(BaseModel):
+    deal_id: str
+
+class SmartChecklistRequest(BaseModel):
+    project_id: str
+
+class ValidatePrerequisitesRequest(BaseModel):
+    project_id: str
+
+class DelayRiskRequest(BaseModel):
+    project_id: str
+
+class ManageTasksRequest(BaseModel):
+    project_id: str
+
+# 1. Dossiê Real da Venda
 @router.get("/sales-dossier")
 async def sales_dossier(deal_id: str):
-    return {"tool": "sales-dossier", "dossier": {}}
+    return {
+        "tool": "sales-dossier",
+        "dossier": {
+            "deal_id": deal_id,
+            "pain_points": ["Slow manual process", "Data silos"],
+            "key_stakeholders": ["CTO", "Ops Manager"],
+            "promised_features": ["SSO", "Custom Reporting"]
+        }
+    }
 
+# 2. Checklist Inteligente por Cliente
 @router.post("/smart-checklist")
-async def smart_checklist(project_id: str):
-    return {"tool": "smart-checklist", "items": []}
+async def smart_checklist(request: SmartChecklistRequest):
+    return {
+        "tool": "smart-checklist",
+        "items": [
+            {"task": "Kickoff Call", "role": "CSM"},
+            {"task": "Data Migration", "role": "Engineer"},
+            {"task": "User Training", "role": "CSM"}
+        ]
+    }
 
+# 3. Validação Automática de Pré-requisitos
 @router.post("/validate-prerequisites")
-async def validate_prerequisites(project_id: str):
-    return {"tool": "validate-prerequisites", "valid": True}
+async def validate_prerequisites(request: ValidatePrerequisitesRequest):
+    checks = {
+        "network_access": random.choice([True, False]),
+        "data_format": True,
+        "users_provisioned": random.choice([True, False])
+    }
+    return {"tool": "validate-prerequisites", "checks": checks, "ready": all(checks.values())}
 
+# 4. Detecção de Risco de Atraso
 @router.get("/delay-risk")
 async def delay_risk(project_id: str):
-    return {"tool": "delay-risk", "risk": "Low"}
+    days_delayed = random.randint(0, 10)
+    return {
+        "tool": "delay-risk",
+        "risk": "High" if days_delayed > 5 else "Low",
+        "predicted_delay_days": days_delayed
+    }
 
+# 5. Gestão Automática de Tarefas
 @router.post("/manage-tasks")
-async def manage_tasks(project_id: str):
-    return {"tool": "manage-tasks", "status": "Optimized"}
+async def manage_tasks(request: ManageTasksRequest):
+    return {
+        "tool": "manage-tasks",
+        "status": "Optimized",
+        "auto_assigned": 3,
+        "overdue_reminded": 1
+    }
 
+# ... Placeholders 6-20
 @router.post("/assisted-integration")
 async def assisted_integration(integration_type: str):
     return {"tool": "assisted-integration", "steps": []}

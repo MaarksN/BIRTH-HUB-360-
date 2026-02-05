@@ -1,28 +1,73 @@
-from fastapi import APIRouter
-from typing import Dict, List
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from typing import Dict, List, Optional
+import random
 
 router = APIRouter(prefix="/cs", tags=["CS"])
 
+class HealthScoreRequest(BaseModel):
+    company_id: str
+
+class SilentChurnRequest(BaseModel):
+    company_id: str
+
+class FeatureAdoptionRequest(BaseModel):
+    company_id: str
+
+class SentimentAnalysisRequest(BaseModel):
+    text: str
+
+class FinancialScoreRequest(BaseModel):
+    company_id: str
+
+# 1. Health Score AI
 @router.get("/health-score")
 async def health_score(company_id: str):
-    return {"tool": "health-score", "score": 85}
+    score = random.randint(40, 100)
+    return {
+        "tool": "health-score",
+        "score": score,
+        "status": "Healthy" if score > 80 else "At Risk" if score < 60 else "Neutral",
+        "factors": ["Login frequency", "Ticket volume"]
+    }
 
+# 2. Detector de Churn Silencioso
 @router.get("/silent-churn")
 async def silent_churn(company_id: str):
-    return {"tool": "silent-churn", "risk": "Medium"}
+    is_silent = random.random() < 0.2
+    return {
+        "tool": "silent-churn",
+        "risk": "High" if is_silent else "Low",
+        "last_active": "10 days ago" if is_silent else "Today"
+    }
 
+# 3. Monitor de Adoção de Features
 @router.get("/feature-adoption")
 async def feature_adoption(company_id: str):
-    return {"tool": "feature-adoption", "usage": {}}
+    return {
+        "tool": "feature-adoption",
+        "adoption_rate": 0.65,
+        "unused_features": ["Reports", "API"]
+    }
 
+# 4. Análise de Sentimento em Tickets
 @router.post("/sentiment-analysis")
-async def sentiment_analysis(text: str):
-    return {"tool": "sentiment-analysis", "sentiment": "Positive"}
+async def sentiment_analysis(request: SentimentAnalysisRequest):
+    # Mock NLP
+    text = request.text.lower()
+    sentiment = "Negative" if "bad" in text or "fail" in text else "Positive" if "great" in text else "Neutral"
+    return {"tool": "sentiment-analysis", "sentiment": sentiment}
 
+# 5. Score Financeiro do Cliente
 @router.get("/financial-score")
 async def financial_score(company_id: str):
-    return {"tool": "financial-score", "score": "A"}
+    return {
+        "tool": "financial-score",
+        "score": "A",
+        "payment_history": "On Time"
+    }
 
+# ... Placeholders 6-20
 @router.get("/risk-alerts")
 async def risk_alerts(company_id: str):
     return {"tool": "risk-alerts", "alerts": []}

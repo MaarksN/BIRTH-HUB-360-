@@ -1,28 +1,68 @@
-from fastapi import APIRouter
-from typing import Dict, List
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from typing import Dict, List, Optional
+import random
 
 router = APIRouter(prefix="/head", tags=["Head of Sales"])
 
+class DataCoachingRequest(BaseModel):
+    user_id: str
+
+class QuotaSimulatorRequest(BaseModel):
+    scenarios: Dict
+
+class OneOnOneFeedbackRequest(BaseModel):
+    user_id: str
+    notes: str
+
+# 1. Detector de Burnout
 @router.get("/burnout-detector")
 async def burnout_detector(team_id: str):
-    return {"tool": "burnout-detector", "risk": "Low"}
+    risk = random.choice(["Low", "Medium", "High"])
+    return {
+        "tool": "burnout-detector",
+        "risk": risk,
+        "overworked_reps": ["John Doe"] if risk == "High" else []
+    }
 
+# 2. Análise de Carga de Trabalho
 @router.get("/workload-analysis")
 async def workload_analysis(user_id: str):
-    return {"tool": "workload-analysis", "load": "Optimal"}
+    return {
+        "tool": "workload-analysis",
+        "active_deals": random.randint(5, 30),
+        "meetings_per_week": random.randint(10, 40),
+        "status": "Balanced"
+    }
 
+# 3. Zombie Deals Detector
 @router.get("/zombie-deals")
 async def zombie_deals():
-    return {"tool": "zombie-deals", "deals": []}
+    return {
+        "tool": "zombie-deals",
+        "count": random.randint(0, 10),
+        "potential_revenue_locked": 50000
+    }
 
+# 4. Auditoria de Pipeline
 @router.get("/pipeline-audit")
 async def pipeline_audit():
-    return {"tool": "pipeline-audit", "health": "Good"}
+    return {
+        "tool": "pipeline-audit",
+        "coverage_ratio": 3.5,
+        "stalled_deals_percentage": 0.15
+    }
 
+# 5. Coaching Baseado em Dados
 @router.post("/data-coaching")
-async def data_coaching(user_id: str):
-    return {"tool": "data-coaching", "tips": []}
+async def data_coaching(request: DataCoachingRequest):
+    return {
+        "tool": "data-coaching",
+        "focus_areas": ["Negotiation", "Discovery"],
+        "recommended_calls_to_review": ["call_123", "call_456"]
+    }
 
+# ... Placeholders 6-20
 @router.get("/skill-gaps")
 async def skill_gaps(user_id: str):
     return {"tool": "skill-gaps", "gaps": ["Negotiation"]}
@@ -36,7 +76,7 @@ async def rep_performance(user_id: str):
     return {"tool": "rep-performance", "metrics": {}}
 
 @router.post("/quota-simulator")
-async def quota_simulator(scenarios: Dict):
+async def quota_simulator(request: QuotaSimulatorRequest):
     return {"tool": "quota-simulator", "feasible": True}
 
 @router.get("/motivation-manager")
@@ -68,7 +108,7 @@ async def team_health():
     return {"tool": "team-health", "score": 88}
 
 @router.post("/one-on-one-feedback")
-async def one_on_one_feedback(user_id: str, notes: str):
+async def one_on_one_feedback(request: OneOnOneFeedbackRequest):
     return {"tool": "one-on-one-feedback", "stored": True}
 
 @router.get("/evolution-history")
