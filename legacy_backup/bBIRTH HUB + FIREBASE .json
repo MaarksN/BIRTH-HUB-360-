@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, createContext, useContext } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 
 // --- Firebase ---
 import { initializeApp } from 'firebase/app';
@@ -52,11 +52,6 @@ ChartJS.register(
 ChartJS.defaults.color = '#94a3b8';
 ChartJS.defaults.font.family = 'Poppins, sans-serif';
 
-
-// =================================================================================
-// CONTEXT
-// =================================================================================
-const DataContext = createContext();
 
 // =================================================================================
 // FIREBASE CONFIGURATION
@@ -359,7 +354,7 @@ const DashboardPage = () => {
 };
 
 const ContactsPage = () => {
-    const { contacts } = useContext(DataContext);
+    const contacts = useFirestoreCollection('contacts');
     const [selectedContact, setSelectedContact] = useState(null);
     const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
@@ -437,12 +432,8 @@ const ContactsPage = () => {
 
 
 const DealsPage = () => {
-    const { deals } = useContext(DataContext);
-    const [stages, setStages] = useState({
-        'qualificacao': [], 'demonstracao': [], 'proposta': [], 'negociacao': [], 'ganho': [], 'perdido': []
-    });
-
-    useEffect(() => {
+    const deals = useFirestoreCollection('deals');
+    const stages = useMemo(() => {
         const sortedStages = {
             'qualificacao': [], 'demonstracao': [], 'proposta': [], 'negociacao': [], 'ganho': [], 'perdido': []
         };
@@ -451,7 +442,7 @@ const DealsPage = () => {
                 sortedStages[deal.stage].push(deal);
             }
         });
-        setStages(sortedStages);
+        return sortedStages;
     }, [deals]);
 
     const handleDragStart = (e, dealId) => {
@@ -578,7 +569,7 @@ const AnalyticsPage = () => {
 };
 
 const TasksPage = () => {
-    const { tasks } = useContext(DataContext);
+    const tasks = useFirestoreCollection('tasks');
 
     const toggleTask = async (task) => {
         const taskRef = doc(db, "tasks", task.id);
@@ -608,8 +599,8 @@ const TasksPage = () => {
 
 const CalendarPage = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
-    const { deals } = useContext(DataContext); // ATENÇÃO: Seus negócios precisam ter um campo 'closeDate' (ex: "2024-05-20")
-    const { tasks } = useContext(DataContext); // ATENÇÃO: Suas tarefas precisam ter um campo 'dueDate' (ex: "2024-05-25")
+    const deals = useFirestoreCollection('deals'); // ATENÇÃO: Seus negócios precisam ter um campo 'closeDate' (ex: "2024-05-20")
+    const tasks = useFirestoreCollection('tasks'); // ATENÇÃO: Suas tarefas precisam ter um campo 'dueDate' (ex: "2024-05-25")
 
     const eventsByDate = useMemo(() => {
         const events = {};
@@ -685,11 +676,6 @@ const CalendarPage = () => {
 // MAIN APP COMPONENT
 // =================================================================================
 export default function App() {
-    // Global Data Fetching
-    const contacts = useFirestoreCollection('contacts');
-    const deals = useFirestoreCollection('deals');
-    const tasks = useFirestoreCollection('tasks');
-
     const [currentPage, setCurrentPage] = useState('dashboard');
 
     const pageDetails = {
@@ -727,8 +713,7 @@ export default function App() {
     };
 
     return (
-        <DataContext.Provider value={{ contacts, deals, tasks }}>
-<div className="flex h-screen bg-gray-900 text-slate-300 overflow-hidden" style={{fontFamily: "'Poppins', sans-serif"}}>
+        <div className="flex h-screen bg-gray-900 text-slate-300 overflow-hidden" style={{fontFamily: "'Poppins', sans-serif"}}>
             {/* ========== SIDEBAR DE NAVEGAÇÃO ========== */}
             <aside className="w-20 flex-shrink-0 bg-gray-950 border-r border-gray-800 flex flex-col items-center py-6">
                 <a href="#" className="mb-10">
@@ -753,6 +738,5 @@ export default function App() {
                 </div>
             </main>
         </div>
-    </DataContext.Provider>
     );
 }
