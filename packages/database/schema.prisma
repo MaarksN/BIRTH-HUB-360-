@@ -33,6 +33,7 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   logs        Log[]
+  tasks       Task[]
 }
 
 model Role {
