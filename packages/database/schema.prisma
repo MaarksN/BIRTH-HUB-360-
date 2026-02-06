@@ -18,7 +18,7 @@ model Tenant {
   updatedAt   DateTime @updatedAt
   users       User[]
   roles       Role[]
-  tasks       Task[]
+  deals       Deal[]
 }
 
 model User {
@@ -68,19 +68,12 @@ model Log {
   createdAt   DateTime @default(now())
 }
 
-model Task {
-  id           String   @id @default(uuid())
-  title        String
-  dueDate      DateTime
-  completed    Boolean  @default(false)
-  associatedTo String?
-
-  tenantId     String
-  tenant       Tenant   @relation(fields: [tenantId], references: [id])
-
-  userId       String?
-  user         User?    @relation(fields: [userId], references: [id])
-
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+model Deal {
+  id          String   @id @default(uuid())
+  name        String
+  closeDate   DateTime?
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
